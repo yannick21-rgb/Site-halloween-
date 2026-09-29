@@ -1,0 +1,669 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette Halloween */
+  --color-ink: #0b0a0f;
+  --color-ink-2: #12111a;
+  --color-ink-3: #1a1826;
+  --color-ember: #ff5c00;
+  --color-ember-2: #ff8c42;
+  --color-blood: #8b0000;
+  --color-violet: #9d4edd;
+  --color-bile: #39ff14;
+  --color-bone: #f2ede4;
+
+  /* Typo. `--font-creepster` et `--font-inter` sont posés par next/font
+     (src/lib/fonts.ts). Chaque var() porte son repli : une variable non
+     définie sans repli rendrait la propriété invalide au calcul. */
+  --font-display: var(--font-creepster, Georgia), Georgia, serif;
+  --font-sans: var(--font-inter, ui-sans-serif), ui-sans-serif, system-ui,
+    sans-serif;
+
+  /* Ombres */
+  --shadow-glow: 0 0 24px -4px var(--color-ember);
+  --shadow-glow-violet: 0 0 24px -4px var(--color-violet);
+  --shadow-card: 0 10px 30px -12px rgb(0 0 0 / 0.8);
+
+  /* Animations */
+  --animate-flicker: flicker 4s infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+  }
+  46% {
+    opacity: 0.55;
+  }
+  48% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 0.75;
+  }
+  64% {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(3deg);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--rise-y, 24px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes panel-in-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@layer base {
+  * {
+    border-color: color-mix(in oklab, var(--color-bone) 12%, transparent);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    background-image:
+      radial-gradient(
+        900px 500px at 12% -10%,
+        color-mix(in oklab, var(--color-violet) 22%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        800px 480px at 88% 0%,
+        color-mix(in oklab, var(--color-ember) 16%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        700px 700px at 50% 110%,
+        color-mix(in oklab, var(--color-blood) 18%, transparent),
+        transparent 65%
+      );
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: var(--color-ember);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ember);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+  }
+
+  /* Barre de défilement */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--color-ember) 45%, transparent);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ember);
+  }
+}
+
+@layer components {
+  /* Halo néon réutilisable */
+  .neon {
+    text-shadow:
+      0 0 8px color-mix(in oklab, currentColor 60%, transparent),
+      0 0 24px color-mix(in oklab, currentColor 40%, transparent);
+  }
+
+  /* Bordure « brisée » façon carte spooky */
+  .card-spooky {
+    position: relative;
+    background: color-mix(in oklab, var(--color-ink-2) 88%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-bone) 12%, transparent);
+    box-shadow: var(--shadow-card);
+    transition:
+      border-color 0.3s ease,
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .card-spooky:hover {
+    border-color: color-mix(in oklab, var(--color-ember) 55%, transparent);
+    box-shadow:
+      var(--shadow-card),
+      0 0 30px -10px var(--color-ember);
+    transform: translateY(-4px);
+  }
+
+  /* Dégradé texte braise */
+  .text-ember-gradient {
+    background: linear-gradient(
+      100deg,
+      var(--color-ember) 0%,
+      var(--color-blood) 45%,
+      var(--color-violet) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Trame fantôme pour les fonds de section */
+  .bg-web {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in oklab, var(--color-bone) 9%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 28px 28px;
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--color-ink-3) 90%, transparent) 25%,
+      color-mix(in oklab, var(--color-bone) 8%, transparent) 50%,
+      color-mix(in oklab, var(--color-ink-3) 90%, transparent) 75%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+
+  /* ---------------------------------------------------------------------
+     Animations d'entrée
+     ---------------------------------------------------------------------
+     `.rise` démarre transparent et décalé, `.is-visible` le remet en place.
+     Le décalage entre enfants d'une liste vient de `--i`, posé par le
+     composant <Stagger>.
+     --------------------------------------------------------------------- */
+
+  .rise {
+    opacity: 0;
+    transform: translate3d(0, var(--rise-y, 24px), 0);
+    transition:
+      opacity var(--rise-duration, 0.65s)
+        cubic-bezier(0.21, 0.47, 0.32, 0.98)
+        var(--rise-delay, 0ms),
+      transform var(--rise-duration, 0.65s)
+        cubic-bezier(0.21, 0.47, 0.32, 0.98)
+        var(--rise-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .rise.is-visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Entrée immédiate, sans dépendre du défilement (hero, premier écran) */
+  .rise-on-mount {
+    opacity: 0;
+    animation: rise-in var(--rise-duration, 0.65s)
+      cubic-bezier(0.21, 0.47, 0.32, 0.98) var(--rise-delay, 0ms) forwards;
+  }
+
+  /* Validation de commande : la coche arrive en rebond */
+  .pop-in {
+    animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s backwards;
+  }
+
+  /* Panneau latéral et voile */
+  .panel-in {
+    animation: panel-in 0.32s cubic-bezier(0.21, 0.47, 0.32, 0.98);
+  }
+  .panel-in-out {
+    animation: panel-in-out 0.24s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+  .veil-in {
+    animation: fade-in 0.24s ease-out;
+  }
+  .veil-in-out {
+    animation: fade-out 0.2s ease-in forwards;
+  }
+
+  /* Menu mobile : déroulé depuis la droite */
+  .slide-down {
+    animation: slide-down 0.26s cubic-bezier(0.21, 0.47, 0.32, 0.98);
+  }
+
+  /* Soulèvement des cartes produit */
+  .hover-lift {
+    transition:
+      transform 0.35s cubic-bezier(0.21, 0.47, 0.32, 0.98),
+      box-shadow 0.35s ease;
+  }
+  .hover-lift:hover {
+    transform: translate3d(0, -6px, 0);
+  }
+
+  /* Bandeau défilant */
+  .marquee-track {
+    animation: marquee 32s linear infinite;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Ambiance Halloween                                                */
+/* ---------------------------------------------------------------- */
+
+/* Calque fixe, non interactif : les effets ne doivent jamais capter le
+   pointeur ni faire défiler la page. */
+.ambient-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Brume : deux nappes de dégradés qui dérivent en sens opposés. */
+.mist {
+  position: absolute;
+  inset: -20% -10% 0;
+  height: 65vh;
+  background: radial-gradient(
+      60% 100% at 20% 100%,
+      color-mix(in oklab, var(--color-ink) 82%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 90% at 80% 100%,
+      color-mix(in oklab, var(--color-ember) 12%, transparent),
+      transparent 70%
+    );
+  will-change: transform;
+}
+.mist--far {
+  opacity: 0.55;
+  animation: mist-drift 46s ease-in-out infinite alternate;
+}
+.mist--near {
+  opacity: 0.32;
+  filter: blur(14px);
+  animation: mist-drift 31s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes mist-drift {
+  from {
+    transform: translate3d(-4%, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(5%, -2%, 0) scale(1.12);
+  }
+}
+
+/* Lueur de bougie : div unique déplacée en translate3d par le composant. */
+.candle-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 520px;
+  height: 520px;
+  margin: -260px 0 0 -260px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--color-ember) 13%, transparent),
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  will-change: transform, opacity;
+}
+.candle-glow[data-visible="true"] {
+  opacity: 1;
+}
+
+/* Araignée et son fil, ancrés en haut à droite. */
+.spider-corner {
+  position: absolute;
+  top: 0;
+  right: 8%;
+  width: 120px;
+  height: 190px;
+}
+.spider-thread {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 150px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--color-bone) 26%, transparent)
+  );
+  transform-origin: top;
+  animation: spider-sway 7s ease-in-out infinite alternate;
+}
+.spider-body {
+  position: absolute;
+  top: 148px;
+  left: 50%;
+  width: 12px;
+  height: 18px;
+  margin-left: -6px;
+  border-radius: 50% 50% 40% 40%;
+  background: color-mix(in oklab, var(--color-ink) 80%, var(--color-bone));
+  animation: spider-descend 7s ease-in-out infinite alternate;
+}
+.spider-leg {
+  position: absolute;
+  top: 5px;
+  width: 9px;
+  height: 1px;
+  background: color-mix(in oklab, var(--color-ink) 80%, var(--color-bone));
+  transform-origin: left center;
+}
+.spider-leg:nth-child(1) {
+  left: -6px;
+  transform: rotate(-28deg);
+}
+.spider-leg:nth-child(2) {
+  left: 6px;
+  transform: rotate(208deg);
+}
+.spider-leg:nth-child(3) {
+  top: 9px;
+  left: -7px;
+  transform: rotate(-14deg);
+}
+.spider-leg:nth-child(4) {
+  top: 9px;
+  left: 7px;
+  transform: rotate(194deg);
+}
+
+@keyframes spider-sway {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(5deg);
+  }
+}
+@keyframes spider-descend {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+/* Fantômes : dégradés doux, très opaques, jamais clignotants. */
+.ghost {
+  position: absolute;
+  width: 130px;
+  height: 190px;
+  border-radius: 50% 50% 12% 12% / 60% 60% 20% 20%;
+  background: radial-gradient(
+    50% 50% at 50% 35%,
+    color-mix(in oklab, var(--color-bone) 20%, transparent),
+    transparent 72%
+  );
+  filter: blur(1px);
+  animation: ghost-float 19s ease-in-out infinite alternate;
+}
+.ghost--left {
+  left: 4%;
+  top: 28%;
+  animation-duration: 21s;
+}
+.ghost--right {
+  right: 6%;
+  top: 58%;
+  width: 96px;
+  height: 140px;
+  animation-duration: 26s;
+  animation-delay: -8s;
+}
+
+@keyframes ghost-float {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(18px, -26px, 0) scale(1.05);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(-14px, -48px, 0) scale(0.97);
+    opacity: 0.25;
+  }
+}
+
+/* Voile d'introduction */
+.intro-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(
+      70% 70% at 50% 45%,
+      color-mix(in oklab, var(--color-ink) 88%, transparent),
+      color-mix(in oklab, var(--color-ink) 98%, black)
+    );
+  animation: fade-in 0.5s ease-out;
+}
+.intro-veil--leaving {
+  animation: fade-out 0.48s ease-in forwards;
+}
+.intro-fog {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    40% 40% at 50% 60%,
+    color-mix(in oklab, var(--color-ember) 16%, transparent),
+    transparent 70%
+  );
+  animation: intro-fog-pulse 3.4s ease-in-out infinite alternate;
+}
+.intro-line {
+  font-size: 0.9rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-bone) 55%, transparent);
+}
+.intro-line--one {
+  animation: intro-rise 0.8s 0.15s both;
+}
+.intro-line--two {
+  animation: intro-rise 0.8s 0.45s both;
+}
+.intro-title {
+  animation: intro-rise 0.9s 0.28s both;
+  text-shadow: 0 0 38px color-mix(in oklab, var(--color-ember) 45%, transparent);
+}
+
+@keyframes intro-fog-pulse {
+  from {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.9;
+    transform: scale(1.12);
+  }
+}
+@keyframes intro-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Effet chaudron au moment de l'ajout au panier. */
+.cauldron-burst {
+  position: fixed;
+  z-index: 250;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-ember);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: cauldron-burst 0.7s ease-out forwards;
+}
+
+@keyframes cauldron-burst {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(var(--burst-x), var(--burst-y))
+      scale(2.4);
+  }
+}
+
+/* Le réglage « animations réduites » du site prend le relais sur le
+   réglage système : il doit couper l'intro et toute l'ambiance. */
+html[data-motion="reduced"] .ambient-layer,
+html[data-motion="reduced"] .intro-veil {
+  display: none;
+}
+
+/* Économise les ressources sur mobile : ni lueur de pointeur ni araignée. */
+@media (max-width: 768px) {
+  .candle-glow,
+  .spider-corner {
+    display: none;
+  }
+  .ghost {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
