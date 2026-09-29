@@ -189,11 +189,13 @@ const fr = {
       "Le module de paiement arrive en phase 2. Ta commande est bien enregistrée dans le panier.",
     backToCart: "Retour au panier",
 
-    secure: "Paiement chiffré et sécurisé",
-    demoNotice: "Mode démonstration",
-    demoNoticeText:
-      "Aucun paiement réel n'est effectué. La commande est enregistrée dans ce navigateur et les liens de téléchargement ci-dessous fonctionnent réellement.",
-    demoCta: "Valider la commande démo",
+    secure: "Aucun paiement en ligne",
+    whatsappNotice: "Paiement via WhatsApp",
+    whatsappNoticeText:
+      "Aucun paiement en ligne. Tu es redirigé vers une conversation WhatsApp avec le fournisseur, avec le récapitulatif de ta commande pré-rempli. C'est avec lui que tu règles le paiement.",
+    whatsappCta: "Commander sur WhatsApp",
+    whatsappError:
+      "Le numéro WhatsApp du fournisseur n'est pas encore renseigné. Réessaie dans un instant.",
     address: "Adresse de livraison",
     addressHint: "Nécessaire pour les produits expédiés.",
     street: "Rue et numéro",
@@ -459,11 +461,13 @@ const en: Dictionary = {
       "The payment module arrives in phase 2. Your items are safely stored in the cart.",
     backToCart: "Back to cart",
 
-    secure: "Encrypted and secure payment",
-    demoNotice: "Demo mode",
-    demoNoticeText:
-      "No real payment is taken. The order is stored in this browser and the download links below genuinely work.",
-    demoCta: "Place demo order",
+    secure: "No online payment",
+    whatsappNotice: "Payment via WhatsApp",
+    whatsappNoticeText:
+      "No online payment. You are redirected to a WhatsApp conversation with the supplier, with your order summary pre-filled. You settle payment with them directly.",
+    whatsappCta: "Order on WhatsApp",
+    whatsappError:
+      "The supplier's WhatsApp number is not set yet. Please try again shortly.",
     address: "Shipping address",
     addressHint: "Required for shipped products.",
     street: "Street and number",

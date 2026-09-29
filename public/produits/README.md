@@ -1,6 +1,19 @@
 # Visuels produits
 
-Dépose ici les **photos** de tes produits, puis lance :
+## État actuel
+
+**33 visuels en place**, un par produit, optimisés en WebP (≈ 2,8 Mo au total,
+−64 % par rapport aux fichiers d'origine). Ils proviennent d'**Openverse**
+(moteur de recherche de médias sous licence ouverte) et sont tous sous licence
+**CC0, BY ou BY-SA** — utilisables y compris commercialement.
+
+La liste complète des titres, auteurs et licences est dans
+[`ATTRIBUTIONS.md`](./ATTRIBUTIONS.md). **À faire avant une mise en production :
+vérifier chaque visuel et, si besoin, le remplacer par une photo de toi.**
+
+## Ajouter ou remplacer une image
+
+Dépose le fichier ici, puis lance :
 
 ```bash
 npm run images:sync

@@ -45,8 +45,20 @@ export const SOCIALS: Social[] = [
 ];
 
 /**
+ * Numéro WhatsApp du fournisseur, au format international sans « + » ni espaces
+ * (ex. « 33612345678 » pour la France).
+ *
+ * Le bouton de paiement ne déclenche aucun paiement en ligne : il ouvre une
+ * conversation WhatsApp avec un message pré-rempli récapitulant la commande.
+ * C'est avec le fournisseur que le paiement se règle.
+ *
+ * ⚠️ Renseigne ton vrai numéro avant la mise en production.
+ */
+export const WHATSAPP_NUMBER = "33612345678";
+
+/**
  * Construit une URL absolue à partir d'un chemin interne.
- * Utilisé par le sitemap, le JSON-LD et les métadonnées Open Graph.
+ * Utilisé par le sitemap, le JSON-LD et les métadonnées OpenGraph.
  */
 export function absoluteUrl(path = "/"): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;

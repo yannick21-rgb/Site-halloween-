@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Info, PartyPopper } from "lucide-react";
+import { ArrowLeft, Info, MessageCircle } from "lucide-react";
 import { useSite } from "@/components/providers/site-provider";
 import { useCart } from "@/components/cart/cart-provider";
-import { ProductArtwork } from "@/components/product/product-artwork";
+import { ProductVisual } from "@/components/product/product-visual";
 import { formatPrice } from "@/lib/format";
-import { placeDemoOrder } from "@/lib/order";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { WHATSAPP_NUMBER } from "@/lib/site";
 import { productSubtitle } from "@/lib/product-labels";
 import { href } from "@/lib/i18n";
 import { ButtonLink, Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ const FIELD =
 
 export function CheckoutPage() {
   const { dict, locale, currency } = useSite();
-  const { items, total, count, slugs, clear } = useCart();
+  const { items, total, count, clear } = useCart();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [country, setCountry] = useState("");
@@ -28,7 +28,7 @@ export function CheckoutPage() {
   // Un seul produit expedie suffit a rendre l'adresse obligatoire.
   const needsShipping = items.some((product) => product.delivery === "physical");
   const [submitting, setSubmitting] = useState(false);
-  const router = useRouter();
+  const [whatsappError, setWhatsappError] = useState(false);
 
   // En phase 1 le paiement n'existe pas : on enregistre la commande en local
   // et on renvoie vers la confirmation, qui contient les vrais liens de
@@ -38,22 +38,32 @@ export function CheckoutPage() {
     event.preventDefault();
     if (submitting) return;
     setSubmitting(true);
+    setWhatsappError(false);
 
-    placeDemoOrder({
-      email,
-      name,
-      country,
-      address: needsShipping
-        ? [street, zip, city, country].filter(Boolean).join(", ")
-        : undefined,
-      shipping: needsShipping,
-      slugs: [...slugs],
+    const address = needsShipping
+      ? [street, zip, city, country].filter(Boolean).join("\n")
+      : undefined;
+
+    // Aucun paiement en ligne : on ouvre une conversation WhatsApp avec le
+    // récapitulatif de la commande. Le paiement se règle avec le fournisseur.
+    const url = buildWhatsAppUrl({
+      items,
       currency,
-      total: total(currency),
+      locale,
+      name,
+      email,
+      address,
+      phone: WHATSAPP_NUMBER,
     });
 
+    if (!url) {
+      setSubmitting(false);
+      setWhatsappError(true);
+      return;
+    }
+
     clear();
-    router.push(`${href(locale, "/commande/succes")}`);
+    window.location.href = url;
   }
 
   if (items.length === 0) {
@@ -188,17 +198,23 @@ export function CheckoutPage() {
             <Info size={18} className="mt-0.5 shrink-0 text-ember" aria-hidden="true" />
             <div>
               <p className="text-sm font-semibold text-bone">
-                {dict.checkout.demoNotice}
+                {dict.checkout.whatsappNotice}
               </p>
               <p className="mt-1 text-sm text-bone/60">
-                {dict.checkout.demoNoticeText}
+                {dict.checkout.whatsappNoticeText}
               </p>
             </div>
           </div>
 
+          {whatsappError && (
+            <p className="rounded-xl border border-blood/40 bg-blood/10 px-4 py-3 text-sm text-bone/80">
+              {dict.checkout.whatsappError}
+            </p>
+          )}
+
           <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-            <PartyPopper size={16} aria-hidden="true" />
-            {dict.checkout.demoCta}
+            <MessageCircle size={16} aria-hidden="true" />
+            {dict.checkout.whatsappCta}
           </Button>
 
           <p className="text-center text-xs text-bone/35">
@@ -213,10 +229,9 @@ export function CheckoutPage() {
             {items.map((product) => (
               <li key={product.slug} className="flex items-center gap-3">
                 <span className="h-12 w-12 shrink-0 overflow-hidden rounded-lg">
-                  <ProductArtwork
-                    glyph={product.art.glyph}
-                    from={product.art.from}
-                    to={product.art.to}
+                  <ProductVisual
+                    product={product}
+                    sizes="48px"
                     className="h-full w-full"
                   />
                 </span>

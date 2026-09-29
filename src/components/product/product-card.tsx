@@ -33,7 +33,7 @@ export function ProductCard({
       >
         <ProductVisual
           product={product}
-          sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 45vw"
+          sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
           className="h-full w-full transition-transform duration-500 group-hover:scale-110"
         />
         <span className="absolute left-3 top-3">

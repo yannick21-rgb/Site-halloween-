@@ -97,6 +97,23 @@ coordonnées, hébergeur, TVA. Les pages légales fournies sont des gabarits.
 > `lucide-react` v1 a retiré les logos de marque, d'où les icônes génériques
 > (caméra, @, lecture, code) plutôt qu'Instagram/X/YouTube/GitHub.
 
+### 4. Paiement via WhatsApp
+
+Aucun module de paiement en ligne : le bouton **« Commander sur WhatsApp »**
+du checkout ouvre une conversation avec le fournisseur, avec le récapitulatif
+de la commande pré-rempli (articles, total, adresse). Le paiement se règle
+ensuite directement avec le fournisseur.
+
+| | |
+| --- | --- |
+| Numéro | `WHATSAPP_NUMBER` dans `src/lib/site.ts` |
+| Construction de l'URL | `src/lib/whatsapp.ts` (`buildWhatsAppUrl`) |
+| Redirection | `handleSubmit` du checkout |
+
+Le numéro s'écrit au format international, sans « + » ni espaces
+(`33612345678`). S'il est invalide, le checkout affiche un message d'attente
+plutôt qu'un lien mort.
+
 ## Phase 2 — ce qui est déjà préparé
 
 Le front est conçu pour accueillir le back sans refonte.
@@ -143,9 +160,17 @@ le champ `image` prime sur le visuel SVG.
 
 ## Photos produits
 
-Les visuels sont **optionnels et progressifs** : un produit sans photo garde
-son illustration SVG générée, donc le catalogue est utilisable tel quel et se
-complète fichier par fichier.
+**33 visuels en place**, un par produit, optimisés en WebP (≈ 2,8 Mo, −64 %).
+Ils viennent d'**Openverse** (médias sous licence ouverte) et sont tous en
+**CC0 / BY / BY-SA** — utilisables commercialement. Attributions complètes dans
+`public/produits/ATTRIBUTIONS.md`.
+
+> **Avant une mise en production**, vérifie chaque visuel : ce sont des photos
+> trouvées par recherche, pas des photos de tes produits. Remplace celles qui ne
+> conviennent pas par les tiennes.
+
+Le champ `image` prime sur l'illustration SVG : dès qu'un fichier nommé d'après
+le `slug` est présent, la photo s'affiche à la place du visuel généré.
 
 1. Dépose tes images dans `public/produits/`, nommées d'après le `slug` du
    produit (`lampe-fantome-lumineuse.webp`).

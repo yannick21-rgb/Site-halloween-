@@ -57,7 +57,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 >
                   <ProductVisual
                     product={product}
-                    sizes="15vw"
+                    sizes="(min-width: 1024px) 15vw, 30vw"
                     className="aspect-square w-full opacity-80"
                   />
                 </div>

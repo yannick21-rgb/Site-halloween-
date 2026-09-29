@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ShoppingBag, Trash2, X, ArrowRight, Download } from "lucide-react";
 import { useSite } from "@/components/providers/site-provider";
 import { useCart } from "@/components/cart/cart-provider";
-import { ProductArtwork } from "@/components/product/product-artwork";
+import { ProductVisual } from "@/components/product/product-visual";
 import { formatPrice } from "@/lib/format";
 import { href } from "@/lib/i18n";
 import { ButtonLink } from "@/components/ui/button";
@@ -111,10 +111,9 @@ export function CartDrawer() {
               {items.map((product) => (
                 <li key={product.slug} className="flex gap-4 py-4">
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl">
-                    <ProductArtwork
-                      glyph={product.art.glyph}
-                      from={product.art.from}
-                      to={product.art.to}
+                    <ProductVisual
+                      product={product}
+                      sizes="64px"
                       className="h-full w-full"
                     />
                   </div>

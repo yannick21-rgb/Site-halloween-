@@ -646,14 +646,106 @@ html[data-motion="reduced"] .intro-veil {
   display: none;
 }
 
-/* Économise les ressources sur mobile : ni lueur de pointeur ni araignée. */
-@media (max-width: 768px) {
+/* ---------------------------------------------------------------- */
+/* Animations adaptées à la taille d'écran                           */
+/* ---------------------------------------------------------------- */
+/* Principe : plus l'écran est petit, moins il y a d'effets. Les        */
+/* animations coûteuses (brume, fantômes, flottants, entrées au        */
+/* défilement) sont réservées aux écrans confortables. Sur mobile, on  */
+/* privilégie la fluidité et la lisibilité.                            */
+
+/* Mobile : on allège au maximum. */
+@media (max-width: 767px) {
+  /* Le fond fixe force un recalcul complet sur mobile (coûteux, et non
+     géré partout par iOS). */
+  body {
+    background-attachment: scroll;
+  }
+
+  /* Effets d'ambiance désactivés. */
+  .mist,
+  .ghost,
   .candle-glow,
   .spider-corner {
     display: none;
   }
+
+  /* Bandeau défilant ralenti. */
+  .marquee-track {
+    animation-duration: 60s;
+  }
+
+  /* Emojis flottants du hero masqués. */
+  .animate-float {
+    display: none;
+  }
+
+  /* Pas de survol sur tactile : on neutralise le soulèvement. */
+  .hover-lift {
+    transition: none;
+  }
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  /* Les entrées sont immédiates, sans dépendre du défilement. */
+  .rise,
+  .rise-on-mount {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    transition: none;
+  }
+
+  /* Les révélations au défilement (composant Reveal) sont désactivées. */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Intro plus compacte. */
+  .intro-title {
+    font-size: 2rem;
+  }
+  .intro-line {
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+  }
+}
+
+/* Tablette : effets réduits mais présents. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .mist--near {
+    display: none;
+  }
   .ghost {
-    opacity: 0.4;
+    opacity: 0.5;
+  }
+  .marquee-track {
+    animation-duration: 45s;
+  }
+}
+
+/* Très petit écran (< 360px) : on resserre encore l'intro. */
+@media (max-width: 359px) {
+  .intro-title {
+    font-size: 1.75rem;
+  }
+  .intro-line {
+    font-size: 0.65rem;
+  }
+}
+
+/* Tactile (tablette tactile, hybride) : pas de survol, donc pas de
+   soulèvement ni de zoom au « hover». */
+@media (pointer: coarse) {
+  .hover-lift:hover {
+    transform: none;
+  }
+  .group:hover .group-hover\:scale-110,
+  .group:hover .group-hover\:scale-105 {
+    transform: none;
   }
 }
 
