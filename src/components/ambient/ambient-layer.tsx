@@ -29,10 +29,6 @@ const GhostDrift = dynamic(
   () => import("@/components/ambient/ghost-drift").then((m) => m.GhostDrift),
   { ssr: false },
 );
-const IntroOverlay = dynamic(
-  () => import("@/components/ambient/intro-overlay").then((m) => m.IntroOverlay),
-  { ssr: false },
-);
 const AmbientSound = dynamic(
   () => import("@/components/ambient/ambient-sound").then((m) => m.AmbientSound),
   { ssr: false },
@@ -48,7 +44,6 @@ export function AmbientLayer() {
       {soundEnabled && <AmbientSound />}
       {reducedMotion ? null : (
         <>
-          <IntroOverlay />
           <Mist />
           <CandleGlow />
           <SpiderWeb />

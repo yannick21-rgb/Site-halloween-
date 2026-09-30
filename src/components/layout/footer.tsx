@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { AtSign, Camera, Code, Play } from "lucide-react";
 import { useSite } from "@/components/providers/site-provider";
 import { href } from "@/lib/i18n";
@@ -16,6 +17,27 @@ const SOCIAL_ICONS = {
   github: Code,
 } as const;
 
+/**
+ * Hauteur de la première ligne du pied de page.
+ *
+ * Les quatre colonnes doivent démarrer sur la même ligne de base, sinon le
+ * grand logotype de la colonne 1 décale visuellement les trois titres
+ * « majuscules » des autres colonnes : sur PC, le décalage est évident. On
+ * impose donc une boîte de hauteur fixe, centrée verticalement, partagée par
+ * le logotype et par tous les titres de colonne.
+ */
+const FIRST_ROW_CLASS = "flex h-7 items-center";
+
+function FooterHeading({ children }: { children: ReactNode }) {
+  return (
+    <h3
+      className={`${FIRST_ROW_CLASS} text-xs font-bold uppercase tracking-[0.2em] text-ember`}
+    >
+      {children}
+    </h3>
+  );
+}
+
 export function Footer() {
   const { dict, locale } = useSite();
   const year = 2026;
@@ -23,13 +45,12 @@ export function Footer() {
   return (
     <footer className="mt-24 border-t border-bone/10 bg-ink-2/60">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid items-start gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-3">
-            <Link
-              href={href(locale, "/")}
-              className="font-display text-3xl text-bone"
-            >
-              <span className="text-ember-gradient">Halloween</span>
+            <Link href={href(locale, "/")} className={FIRST_ROW_CLASS}>
+              <span className="font-display text-2xl leading-none text-bone">
+                <span className="text-ember-gradient">Halloween</span>
+              </span>
             </Link>
             <p className="max-w-xs text-sm text-bone/50">{dict.siteTagline}</p>
             <div className="mt-2 flex gap-2">
@@ -52,9 +73,7 @@ export function Footer() {
           </div>
 
           <nav className="flex flex-col gap-3" aria-label={dict.footer.shop}>
-            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-ember">
-              {dict.footer.shop}
-            </h3>
+            <FooterHeading>{dict.footer.shop}</FooterHeading>
             <ul className="flex flex-col gap-2 text-sm text-bone/55">
               <li>
                 <Link
@@ -78,9 +97,7 @@ export function Footer() {
           </nav>
 
           <nav className="flex flex-col gap-3" aria-label={dict.footer.help}>
-            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-ember">
-              {dict.footer.help}
-            </h3>
+            <FooterHeading>{dict.footer.help}</FooterHeading>
             <ul className="flex flex-col gap-2 text-sm text-bone/55">
               <li>
                 <Link
@@ -100,7 +117,7 @@ export function Footer() {
               </li>
             </ul>
 
-            <h3 className="mt-4 text-xs font-bold uppercase tracking-[0.2em] text-ember">
+            <h3 className="mt-4 flex h-7 items-center text-xs font-bold uppercase tracking-[0.2em] text-ember">
               {dict.footer.legal}
             </h3>
             <ul className="flex flex-col gap-2 text-sm text-bone/55">
@@ -132,19 +149,17 @@ export function Footer() {
           </nav>
 
           <div className="flex flex-col gap-3">
-            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-ember">
-              {dict.footer.newsletter}
-            </h3>
+            <FooterHeading>{dict.footer.newsletter}</FooterHeading>
             <p className="text-sm text-bone/50">{dict.home.newsletterText}</p>
             <NewsletterForm />
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-bone/10 pt-6 text-xs text-bone/40 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center gap-4 border-t border-bone/10 pt-6 text-xs text-bone/40 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} Halloween. {dict.footer.rights}
           </p>
-          <p>{dict.footer.payment}</p>
+          <p className="sm:text-right">{dict.footer.payment}</p>
         </div>
       </div>
     </footer>

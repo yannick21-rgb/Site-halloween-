@@ -290,10 +290,6 @@ const fr = {
     motionOff: "Animations réduites",
     soundOn: "Son",
     soundOff: "Son coupé",
-    enter: "Entrer",
-    skip: "Passer l'intro",
-    introLine1: "Quelque chose gratte à la porte",
-    introLine2: "La boutique d'Halloween est ouverte",
     cartBurst: "Ajouté au chaudron",
   },
 };
@@ -558,10 +554,6 @@ const en: Dictionary = {
     motionOff: "Reduced motion",
     soundOn: "Sound",
     soundOff: "Sound off",
-    enter: "Enter",
-    skip: "Skip intro",
-    introLine1: "Something is scratching at the door",
-    introLine2: "The Halloween shop is open",
     cartBurst: "Added to the cauldron",
   },
 };
