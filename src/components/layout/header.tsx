@@ -10,17 +10,6 @@ import { ButtonLink } from "@/components/ui/button";
 import { CurrencySwitcher, LanguageSwitcher } from "@/components/layout/switchers";
 import { AmbienceToggles } from "@/components/ambient/ambience-toggles";
 
-export function AnnouncementBar() {
-  const { dict } = useSite();
-  return (
-    <div className="relative overflow-hidden border-b border-ember/20 bg-ember/10 text-center">
-      <p className="px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-ember sm:text-xs">
-        {dict.announcement}
-      </p>
-    </div>
-  );
-}
-
 export function Header() {
   const { dict, locale } = useSite();
   const { count, open } = useCart();

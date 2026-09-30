@@ -6,7 +6,7 @@ import { SiteProvider } from "@/components/providers/site-provider";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { AmbientLayer } from "@/components/ambient/ambient-layer";
-import { AnnouncementBar, Header } from "@/components/layout/header";
+import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 
 export function buildMetadata(locale: Locale): Metadata {
@@ -68,7 +68,6 @@ export function SiteShell({
           {locale === "fr" ? "Aller au contenu" : "Skip to content"}
         </a>
         <div className="flex min-h-screen flex-col">
-          <AnnouncementBar />
           <Header />
           <main id="main" className="flex-1">
             {children}

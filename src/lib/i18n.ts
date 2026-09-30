@@ -30,8 +30,6 @@ export function stripLocale(pathname: string): string {
 const fr = {
   siteName: "Halloween",
   siteTagline: "Produits digitaux pour une nuit mémorable",
-  announcement:
-    "Livraison instantanée après paiement · Licences commerciales incluses",
 
   nav: {
     products: "Produits",
@@ -305,8 +303,6 @@ export type Dictionary = typeof fr;
 const en: Dictionary = {
   siteName: "Halloween",
   siteTagline: "Digital products for a night to remember",
-  announcement:
-    "Instant delivery after payment · Commercial licences included",
 
   nav: {
     products: "Products",
