@@ -98,8 +98,12 @@ const REACH = [7, 6, 5.5, 4.5, 7, 6, 5.5, 4.5];
  * Espèces. `leg` allonge la patte depuis son point d'attache (genou et pointe
  * s'éloignent), `body` réduit le corps autour du pivot céphalique. Le rapport
  * entre les DEUX est ce qui distingue une espèce : c'est la longueur des
- * pattes rapportée à la taille du corps qui caractérise une araignée de cave
- * d'une lycosée, bien plus que la couleur.
+ * pattes rapportée à la taille du corps qui caractérise un pholque d'une
+ * lycosée, bien plus que la couleur.
+ *
+ * `stroke` est en unités du viewBox, et le viewBox est rendu à 1:1 (38 unités
+ * pour 38 px) : une valeur de 0.8 fait donc moins d'un pixel à l'écran et
+ * disparaît. C'est la contrainte qui borne le réglage du pholque.
  *
  * `label` n'est pas affiché : il documente l'espèce visée.
  */
@@ -109,10 +113,12 @@ const SPECIES: Record<
 > = {
   // Agélénide des maisons : robuste, pattes moyennes.
   drop: { leg: 1, body: 1, stroke: 1.35, mark: false, label: "agélénide" },
-  // Pholque : corps minuscule, pattes démesurées. La longueur dépasse le
-  // viewBox, ce qui est voulu : le SVG est en `overflow: visible` et le
-  // recentrage se fait sur sa boîte, pas sur son contenu débordant.
-  line: { leg: 1.5, body: 0.58, stroke: 0.8, mark: false, label: "pholque" },
+  // Pholque : le plus dégingandé des trois. Un vrai pholque a le corps sept
+  // fois plus petit que ses pattes, rapport impossible ici sans que l'animal
+  // devienne une tache de pixels à 38 px. On garde le caractère — nettement
+  // le plus longiligne, rapport 1,83 contre ~1 pour les deux autres — en
+  // remontant le corps et en raccourcissant un peu les pattes.
+  line: { leg: 1.32, body: 0.72, stroke: 1.05, mark: false, label: "pholque" },
   // Lycosée : abdomen volumineux, pattes puissantes.
   ground: { leg: 1.18, body: 1.16, stroke: 1.6, mark: true, label: "lycosée" },
 };
