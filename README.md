@@ -202,6 +202,9 @@ demande des animations réduites.
 | Lueur de bougie | `src/components/ambient/candle-glow.tsx` | suit le pointeur, uniquement si `pointer: fine` |
 | Araignée et fil | `src/components/ambient/spider-web.tsx` | balancement CSS, masqué sous 768 px |
 | Fantômes | `src/components/ambient/ghost-drift.tsx` | dérive lente sur les bords de l'écran |
+| Chauves-souris | `src/components/ambient/bat-flight.tsx` | 4 trajectoires tirées au sort, ~1 vol toutes les 15-29 s |
+| Araignées passantes | `src/components/ambient/spider-crawl.tsx` | 3 espèces en rotation : suspension, fil tendu, sol |
+| Ordonnanceur des apparitions | `src/components/ambient/flight-cues.tsx` | minuterie unique, réglages dans `TIMING` |
 | Effet chaudron | `src/components/product/add-to-cart-button.tsx` | particules à l'ajout au panier |
 | Nappe sonore | `src/components/ambient/ambient-sound.tsx` | **Web Audio API, aucun fichier** : bourdon, souffle, craquements |
 | Réglages | `src/components/ambient/ambience-toggles.tsx` | boutons son + animations dans le header (desktop et menu mobile) |
@@ -209,6 +212,23 @@ demande des animations réduites.
 Les deux réglages sont persistés dans `localStorage` (`halloween:sound`,
 `halloween:reduced-motion`), exposés par `SiteProvider` et répercutés sur
 `<html data-motion="reduced">` pour que le CSS puisse couper l'ensemble.
+
+**Apparitions ponctuelles.** Brume et fantômes sont toujours là ; chauves-souris
+et araignées, non. Une minuterie unique (`flight-cues.tsx`) décide quand l'animal
+arrive et par où il passe, puis retire l'élément : entre deux apparitions il n'y a
+rien dans le DOM. Le mouvement reste entièrement en CSS, sans boucle
+`requestAnimationFrame`. Tous les rythmes sont regroupés dans `TIMING`, en tête du
+fichier. Les minuteries sont suspendues quand l'onglet passe en arrière-plan, pour
+qu'aucun animal ne reste figé au milieu de l'écran au retour.
+
+Les deux animaux sont dessinés d'après leur anatomie réelle, pas d'après une
+silhouette inventée. La chauve-souris replie l'aile à la remontée (l'envergure
+tombe à ~54 % de la pleine envergure), et festonne son bord de fuite entre les
+pointes des doigts. L'araignée a un corps en deux parties reliées par un pédicel,
+ses huit pattes sont nées du céphalothorax et articulées avec un crochet au genou,
+et elle marche en tétrapode alternée. Les trois variantes sont trois espèces aux
+proportions différentes — agélénide, pholque, lycosée — obtenues en calculant
+séparément la longueur des pattes et la taille du corps.
 
 **Accessibilité.** Au premier passage, le réglage « animations réduites » reprend
 la préférence système (`prefers-reduced-motion`). Ensuite, le choix explicite
@@ -226,7 +246,7 @@ src/
 │   ├── page.tsx · produits/ · panier/ · checkout/ · a-propos/ · faq/ · legal/
 │   └── sitemap.ts · robots.ts
 ├── components/
-│   ├── ambient/   ambient-layer, intro-overlay, mist, candle-glow, spider-web, ghost-drift, ambient-sound, ambience-toggles
+│   ├── ambient/   ambient-layer, intro-overlay, mist, candle-glow, spider-web, ghost-drift, bat-flight, spider-crawl, flight-cues, ambient-sound, ambience-toggles
 │   ├── cart/      cart-provider, cart-drawer, cart-page
 │   ├── catalog/   catalog-page, catalog-browser
 │   ├── checkout/  checkout-page

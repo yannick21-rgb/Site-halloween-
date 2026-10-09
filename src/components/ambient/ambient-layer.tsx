@@ -33,6 +33,10 @@ const AmbientSound = dynamic(
   () => import("@/components/ambient/ambient-sound").then((m) => m.AmbientSound),
   { ssr: false },
 );
+const FlightCues = dynamic(
+  () => import("@/components/ambient/flight-cues").then((m) => m.FlightCues),
+  { ssr: false },
+);
 
 export function AmbientLayer() {
   const { reducedMotion, soundEnabled } = useSite();
@@ -48,6 +52,9 @@ export function AmbientLayer() {
           <CandleGlow />
           <SpiderWeb />
           <GhostDrift />
+          {/* Chauves-souris et araignées : apparitions ponctuelles, pilotées
+              par une minuterie. Rien n'est chargé ni affiché au repos. */}
+          <FlightCues />
         </>
       )}
     </>

@@ -549,6 +549,438 @@
   }
 }
 
+/* Chauves-souris et araignées passantes                               */
+/* ---------------------------------------------------------------- */
+/* Ces deux effets n'ont pas la même logique que la brume ou les     */
+/* fantômes : ils ne sont pas toujours là. L'élément n'existe que   */
+/* pendant son passage (monté par `flight-cues.tsx`) et tout le      */
+/* mouvement est en CSS. Entre deux apparitions, il n'y a rien      */
+/* dans le DOM et rien à animer.                                     */
+
+/* --- Chauves-souris ---------------------------------------------- */
+
+.bat-flight {
+  position: absolute;
+  top: var(--bat-top);
+  left: 0;
+  width: 46px;
+  height: 26px;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.bat-wing-svg {
+  display: block;
+}
+.bat-wing-svg[data-flipped="true"] {
+  transform: scaleX(-1);
+}
+
+.bat-wing,
+.bat-fur {
+  fill: color-mix(in oklab, var(--color-ink) 82%, var(--color-bone));
+}
+/* Membrane uropatagium : plus fine que le corps, on la devine. */
+.bat-membrane {
+  fill: color-mix(in oklab, var(--color-ink) 60%, var(--color-bone));
+}
+
+/* Le battement n'est PAS symétrique.
+ *
+ * D'après les mesures de cinématique de vol (Hedenström & Johansson, JEB 2015) :
+ * à la descente l'aile est tendue au maximum et balaye vers l'avant et le
+ * bas ; à la remontée elle se REPLIE — l'envergure tombe autour de 54 % de la
+ * pleine envergure et la pointe revient vers l'arrière. Un simple aller-retour
+ * en miroir, ce qui est l'animation classique du vampire ou de l'oiseau, se
+ * reconnaîtrait immédiatement : on plie donc l'aile en `scaleX` pendant la
+ * remontée.
+ *
+ * `--k` vaut 1 à droite et -1 à gauche : les deux ailes battent en miroir
+ * autour de leur épaule (x = 23).
+ */
+.bat-wing {
+  transform-box: fill-box;
+  animation: bat-stroke 0.13s linear infinite;
+}
+.bat-wing--left {
+  transform-origin: 100% 42%;
+  --k: -1;
+}
+.bat-wing--right {
+  transform-origin: 0% 42%;
+  --k: 1;
+}
+
+@keyframes bat-stroke {
+  /* Aile tendue, fin de remontée. */
+  0% {
+    transform: rotate(calc(var(--k) * -9deg)) scaleX(1);
+  }
+  /* Descente : l'aile est au maximum de son extension. */
+  28% {
+    transform: rotate(calc(var(--k) * 36deg)) scaleX(1);
+  }
+  50% {
+    transform: rotate(calc(var(--k) * 22deg)) scaleX(1);
+  }
+  /* Remontée : l'aile se replie vers le corps. */
+  76% {
+    transform: rotate(calc(var(--k) * -24deg)) scaleX(0.54);
+  }
+  100% {
+    transform: rotate(calc(var(--k) * -9deg)) scaleX(1);
+  }
+}
+
+/* Quatre trajectoires tirées au sort : deux diagonales, une traversée
+   horizontale, une plongée. Chacune sort du cadre par où elle est
+   entrée, donc rien n'apparaît ni ne disparaît dans le champ. */
+.bat-flight--rise {
+  animation: bat-rise var(--bat-duration) linear forwards;
+}
+.bat-flight--fall {
+  animation: bat-fall var(--bat-duration) linear forwards;
+}
+.bat-flight--level {
+  animation: bat-level var(--bat-duration) linear forwards;
+}
+.bat-flight--dive {
+  animation: bat-dive var(--bat-duration) linear forwards;
+}
+
+@keyframes bat-rise {
+  0% {
+    transform: translate3d(-70px, 52px, 0) rotate(-7deg);
+    opacity: 0;
+  }
+  10%,
+  88% {
+    opacity: 0.72;
+  }
+  50% {
+    transform: translate3d(calc(50vw + 26px), -14px, 0) rotate(5deg);
+  }
+  100% {
+    transform: translate3d(calc(100vw + 70px), -64px, 0) rotate(-6deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bat-fall {
+  0% {
+    transform: translate3d(70px, -56px, 0) scaleX(-1) rotate(-7deg);
+    opacity: 0;
+  }
+  10%,
+  88% {
+    opacity: 0.72;
+  }
+  50% {
+    transform: translate3d(calc(-50vw - 26px), 6px, 0) scaleX(-1) rotate(5deg);
+  }
+  100% {
+    transform: translate3d(calc(-100vw - 70px), 62px, 0) scaleX(-1) rotate(-6deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bat-level {
+  0% {
+    transform: translate3d(-70px, 0, 0) rotate(-4deg);
+    opacity: 0;
+  }
+  10%,
+  88% {
+    opacity: 0.72;
+  }
+  28% {
+    transform: translate3d(28vw, -34px, 0) rotate(4deg);
+  }
+  62% {
+    transform: translate3d(64vw, 30px, 0) rotate(-4deg);
+  }
+  100% {
+    transform: translate3d(calc(100vw + 70px), -8px, 0) rotate(3deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bat-dive {
+  0% {
+    transform: translate3d(12vw, -70px, 0) rotate(24deg);
+    opacity: 0;
+  }
+  12%,
+  92% {
+    opacity: 0.72;
+  }
+  45% {
+    transform: translate3d(34vw, 16vh, 0) rotate(-16deg);
+  }
+  78% {
+    transform: translate3d(58vw, 46vh, 0) rotate(12deg);
+  }
+  100% {
+    transform: translate3d(72vw, 96vh, 0) rotate(-4deg);
+    opacity: 0;
+  }
+}
+
+/* --- Araignées passantes ----------------------------------------- */
+/* Préfixe `crawler-`, jamais `spider-` : les secondes appartiennent  */
+/* à l'araignée suspendue de `spider-web.tsx`.                       */
+
+.crawler {
+  position: absolute;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* L'animal est un SVG dessiné à sa vraie anatomie ; le CSS ne fait que le
+   colorer et animer les articulations. */
+/* Le SVG reste dans le flux : `.crawler-flip` se dimensionne donc autour de
+   lui, et son `translate(-50%, -50%)` recentre réellement l'animal sur le
+   point d'ancrage (fil, niveau). En `position: absolute` le parent
+   s'effondrerait à zéro et la translation ne porterait plus sur rien. */
+.crawler-svg {
+  display: block;
+  overflow: visible;
+  /* `view-box` + origine centrée : sans cela le transfert de poids
+     tournerait autour du coin du viewBox et non du milieu du corps. */
+  transform-box: view-box;
+  transform-origin: center;
+  animation: crawler-bob 0.84s ease-in-out infinite alternate;
+}
+
+/* L'abdomen est plus volumineux que le céphalothorax chez la plupart des
+   espèces : le rapport des deux fait partie des critères d'identification,
+   et c'est dans le tracé du SVG qu'il est posé, pas ici. */
+.sl-abdomen {
+  fill: color-mix(in oklab, var(--color-ink) 72%, var(--color-bone));
+}
+.sl-carapace {
+  fill: color-mix(in oklab, var(--color-ink) 80%, var(--color-bone));
+}
+.sl-pedicel {
+  fill: color-mix(in oklab, var(--color-ink) 70%, var(--color-bone));
+}
+.sl-eye {
+  fill: color-mix(in oklab, var(--color-ink) 52%, var(--color-bone));
+}
+.sl-palp {
+  fill: none;
+  stroke: color-mix(in oklab, var(--color-ink) 66%, var(--color-bone));
+  stroke-width: 1.25;
+  stroke-linecap: round;
+}
+/* Marque médio-dorsale : présente seulement chez la lycosée. */
+.sl-mark {
+  fill: color-mix(in oklab, var(--color-bone) 26%, transparent);
+}
+.sl-mark[data-on="false"] {
+  display: none;
+}
+
+/* Une patte = hanche + genou + tarse, avec un angle au genou. C'est la
+   cassure qui donne la posture : une patte droite ne ressemble à rien. */
+.sl-leg {
+  fill: none;
+  stroke: color-mix(in oklab, var(--color-ink) 70%, var(--color-bone));
+  stroke-width: var(--stroke-width);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* `view-box` pour que l'origine soit donnée en coordonnées du viewBox : on
+     peut ainsi viser exactement le point d'attache sur le céphalothorax. */
+  transform-box: view-box;
+  transform-origin: var(--ox) var(--oy);
+  animation: crawler-step 0.42s ease-in-out var(--phase) infinite alternate;
+}
+
+/* Le pas : la patte balaye autour de son point d'attache. Les deux tétrapodes
+   sont décalées d'une demi-période (voir `GAIT`). */
+@keyframes crawler-step {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(var(--reach));
+  }
+}
+/* Transfert de poids, à deux fois la fréquence du pas. */
+@keyframes crawler-bob {
+  from {
+    transform: rotate(-1.6deg);
+  }
+  to {
+    transform: rotate(1.6deg);
+  }
+}
+
+/* Miroir : l'animal fait face au sens de son déplacement. */
+.crawler-flip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%) scaleX(var(--spider-direction));
+}
+
+/* Variante « suspension » : le corps descend son fil, marque un temps
+   d'arrêt, se balance le long de la soie, puis remonte. Deux éléments
+   imbriqués, un seul axe chacun — la rotation du bras porte le corps
+   sur l'arc du balancement. */
+.crawler--drop {
+  left: var(--spider-anchor);
+  top: 0;
+  width: 1px;
+  height: var(--spider-drop);
+  animation: crawler-fade var(--spider-duration) linear both;
+}
+.crawler--drop .crawler-arm {
+  position: absolute;
+  inset: 0;
+  transform-origin: top center;
+  animation: crawler-swing var(--spider-duration) linear forwards;
+}
+.crawler--drop .crawler-thread {
+  position: absolute;
+  inset: 0;
+  transform-origin: top center;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--color-bone) 24%, transparent)
+  );
+  animation: crawler-unfurl var(--spider-duration) linear forwards;
+}
+.crawler--drop .crawler-stop {
+  position: absolute;
+  left: 0;
+  /* En haut du bras, pas en bas : c'est `crawler-descend` qui le fait
+     descendre jusqu'au bout du rail. En le plaçant déjà en bas, il tombait de
+     la longueur du rail en plus. */
+  top: 0;
+  animation: crawler-descend var(--spider-duration) linear forwards;
+}
+/* Les paliers viennent d'`animation-timing-function` déclarée dans les
+   keyframes : une pause franche vaut mieux qu'une suite de segments. */
+/* Le rail pend vers le bas : une rotation positive le ferait basculer à
+   gauche. Le signe est donc inversé pour que `--spider-direction: 1` corresponde
+   toujours à « vers la droite », comme pour les deux variantes à plat. */
+@keyframes crawler-swing {
+  0%,
+  26% {
+    transform: rotate(0deg);
+  }
+  60% {
+    transform: rotate(
+      calc(var(--spider-swing) * var(--spider-direction) * -1)
+    );
+    animation-timing-function: ease-in-out;
+  }
+  100% {
+    transform: rotate(
+      calc(var(--spider-swing) * var(--spider-direction) * -1)
+    );
+  }
+}
+/* Fondu commun aux trois variantes. Il est porté par la racine de la variante
+   et non par le corps : sinon le fil resterait visible sans l'animal, et le
+   `opacity: 0` de `.crawler` masquerait tout le monde. */
+@keyframes crawler-fade {
+  0% {
+    opacity: 0;
+  }
+  4%,
+  96% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes crawler-descend {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5);
+  }
+  /* Descente jusqu'au bout du rail. */
+  22% {
+    transform: translateX(-50%) translateY(var(--spider-drop));
+    animation-timing-function: linear;
+  }
+  /* Temps d'arrêt, puis balancement : le corps reste au bout du rail pendant
+     que le bras pivote, sinon l'animal remonterait pendant le swing. */
+  26%,
+  60% {
+    transform: translateX(-50%) translateY(var(--spider-drop));
+    animation-timing-function: ease-in-out;
+  }
+  /* Remontée le long de la soie. */
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+/* Le fil grandit avec la descente et se rétracte pendant la remontée, pour
+   rester collé au corps. */
+@keyframes crawler-unfurl {
+  0% {
+    transform: scaleY(0);
+    animation-timing-function: ease-in;
+  }
+  22%,
+  60% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0);
+  }
+}
+
+/* Variantes « fil tendu » et « sol » : même anatomie, hauteur et
+   vitesse différentes, sens de marche tiré au sort. */
+.crawler--line,
+.crawler--ground {
+  left: 0;
+  top: var(--spider-level);
+  width: 100%;
+  height: 1px;
+  animation: crawler-fade var(--spider-duration) linear both;
+}
+.crawler--line .crawler-thread,
+.crawler--ground .crawler-thread {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in oklab, var(--color-bone) 16%, transparent) 10%,
+    color-mix(in oklab, var(--color-bone) 16%, transparent) 90%,
+    transparent
+  );
+}
+.crawler--ground .crawler-thread {
+  opacity: 0.45;
+}
+.crawler--line .crawler-track,
+.crawler--ground .crawler-track {
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: crawler-walk var(--spider-duration) linear forwards;
+}
+
+@keyframes crawler-walk {
+  0% {
+    transform: translate3d(calc(var(--spider-direction) * -70px), 0, 0);
+  }
+  100% {
+    transform: translate3d(calc(var(--spider-direction) * (100vw + 70px)), 0, 0);
+  }
+}
+
+/* Les trois espèces ont des proportions calculées côté composant (voir
+   `SPECIES`) : rien à faire ici, elles vivent dans le tracé du SVG. */
+
 /* Effet chaudron au moment de l'ajout au panier. */
 .cauldron-burst {
   position: fixed;
@@ -600,7 +1032,9 @@ html[data-motion="reduced"] .ambient-layer {
   .mist,
   .ghost,
   .candle-glow,
-  .spider-corner {
+  .spider-corner,
+  .bat-flight,
+  .crawler {
     display: none;
   }
 
